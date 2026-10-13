@@ -16,7 +16,7 @@ const Home = () => {
   return (
     <>
       <section
-        className="relative h-[55vh] min-h-[400px] overflow-hidden bg-cover bg-center sm:h-[60vh] md:h-[65vh]"
+        className="relative h-[45vh] min-h-[400px] overflow-hidden bg-cover bg-center sm:h-[60vh] md:h-[65vh]"
         style={{ backgroundImage: `url(${B1})` }}
       >
         <div className="absolute inset-0 bg-[#3154A5]/60"></div>

@@ -4,33 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import logo from "../assets/Logo.jpeg";
 
-const Navbar = () => {
+const Navbar = ({ loggedIn, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navLinks = [
-    {
-      id: 1,
-      name: "Home",
-      to: "/",
-    },
-    {
-      id: 2,
-      name: "Events",
-      to: "/events",
-    },
-    {
-      id: 3,
-      name: "About",
-      to: "/about",
-    },
-    {
-      id: 4,
-      name: "Contact",
-      to: "/contact",
-    },
+    { id: 1, name: "Home", to: "/" },
+    { id: 2, name: "Events", to: "/events" },
+    { id: 3, name: "About", to: "/about" },
+    { id: 4, name: "Contact", to: "/contact" },
   ];
-
-  const navigate = useNavigate();
 
   const handleSignUp = () => {
     setMenuOpen(false);
@@ -42,6 +25,12 @@ const Navbar = () => {
     navigate("/signin");
   };
 
+  const handleLogout = () => {
+    setMenuOpen(false);
+    onLogout();
+    navigate("/signin");
+  };
+
   const handleLinkClick = () => {
     setMenuOpen(false);
   };
@@ -50,43 +39,38 @@ const Navbar = () => {
     <header className="relative z-50 w-full border-b-4 border-[#762A7D] bg-[#3154A5] shadow-lg">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          <div className="flex min-w-0 items-center">
-            <Link
-              to="/"
-              onClick={handleLinkClick}
-              className="group flex items-center gap-3"
-            >
-              <div className="relative shrink-0">
-                <div className="absolute inset-0 rounded-full bg-[#5BC0E3] opacity-40 blur-md transition-opacity duration-300 group-hover:opacity-70"></div>
+          <Link
+            to="/"
+            onClick={handleLinkClick}
+            className="group flex min-w-0 items-center gap-3"
+          >
+            <img
+              src={logo}
+              alt="Network Evangelistic Team Logo"
+              className="h-12 w-12 shrink-0 rounded-full bg-white object-contain p-1 shadow-md sm:h-14 sm:w-14"
+            />
 
-                <img
-                  src={logo}
-                  alt="Network Evangelistic Team Logo"
-                  className="relative h-12 w-12 rounded-full bg-white object-contain p-1 shadow-md transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14"
-                />
-              </div>
+            <div className="min-w-0">
+              <h1 className="text-sm font-extrabold tracking-wide text-white sm:text-base md:text-lg">
+                Network
+                <span className="text-[#5BC0E3]"> Evangelistic</span>
+                <span> Team</span>
+              </h1>
 
-              <div className="min-w-0">
-                <h1 className="text-sm font-extrabold leading-tight tracking-wide text-white sm:text-base md:text-lg">
-                  Network
-                  <span className="text-[#5BC0E3]"> Evangelistic</span>
-                  <span className="text-white"> Team</span>
-                </h1>
+              <p className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-white/70 sm:text-xs">
+                Jooust Chapter
+              </p>
+            </div>
+          </Link>
 
-                <p className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-white/70 sm:text-xs">
-                  Jooust Chapter
-                </p>
-              </div>
-            </Link>
-          </div>
-
-          <nav className="hidden justify-center lg:flex">
-            <ul className="flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-2 shadow-sm backdrop-blur-md">
+          <nav className="hidden lg:flex">
+            <ul className="flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-2">
               {navLinks.map((link) => (
                 <li key={link.id}>
                   <Link
                     to={link.to}
-                    className="block rounded-full px-5 py-2.5 font-medium text-white transition-all duration-200 hover:bg-white hover:text-[#3154A5] hover:shadow-md"
+                    onClick={handleLinkClick}
+                    className="block rounded-full px-5 py-2.5 font-medium text-white transition-all hover:bg-white hover:text-[#3154A5]"
                   >
                     {link.name}
                   </Link>
@@ -95,53 +79,43 @@ const Navbar = () => {
             </ul>
           </nav>
 
-          <div className="hidden items-center justify-end gap-3 lg:flex">
-            <Button
-              text="Sign in"
-              onClick={handleSignIn}
-              className="rounded-full border border-white/60 bg-transparent px-5 py-2.5 font-semibold text-white transition-all duration-200 hover:bg-white hover:text-[#3154A5]"
-            />
+          <div className="hidden items-center gap-3 lg:flex">
+            {!loggedIn ? (
+              <>
+                <Button
+                  text="Sign in"
+                  onClick={handleSignIn}
+                  className="rounded-full border border-white/60 bg-transparent px-5 py-2.5 font-semibold text-white hover:bg-white hover:text-[#3154A5]"
+                />
 
-            <Button
-              onClick={handleSignUp}
-              text="Sign Up"
-              className="rounded-full bg-[#762A7D] px-6 py-2.5 font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#5BC0E3] hover:text-[#3154A5] hover:shadow-lg"
-            />
+                <Button
+                  text="Sign Up"
+                  onClick={handleSignUp}
+                  className="rounded-full bg-[#762A7D] px-6 py-2.5 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+                />
+              </>
+            ) : (
+              <Button
+                text="Logout"
+                onClick={handleLogout}
+                className="rounded-full bg-[#762A7D] px-6 py-2.5 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+              />
+            )}
           </div>
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-200 hover:bg-white hover:text-[#3154A5] lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white lg:hidden"
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
           >
             {menuOpen ? (
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
@@ -150,8 +124,8 @@ const Navbar = () => {
         <div
           className={`absolute left-0 right-0 top-full lg:hidden ${
             menuOpen
-              ? "pointer-events-auto visible opacity-100"
-              : "pointer-events-none invisible opacity-0"
+              ? "visible opacity-100"
+              : "invisible pointer-events-none opacity-0"
           }`}
         >
           <div className="border-t border-white/20 bg-[#3154A5] px-4 pb-5 pt-3 shadow-2xl transition-opacity duration-300">
@@ -162,7 +136,7 @@ const Navbar = () => {
                     <Link
                       to={link.to}
                       onClick={handleLinkClick}
-                      className="block rounded-xl px-5 py-3 font-medium text-white transition-all duration-200 hover:bg-white hover:text-[#3154A5]"
+                      className="block rounded-xl px-5 py-3 font-medium text-white hover:bg-white hover:text-[#3154A5]"
                     >
                       {link.name}
                     </Link>
@@ -172,17 +146,27 @@ const Navbar = () => {
             </nav>
 
             <div className="mt-4 flex flex-col gap-3 border-t border-white/20 pt-4 sm:flex-row">
-              <Button
-                text="Sign in"
-                onClick={handleSignIn}
-                className="w-full rounded-xl border border-white/60 bg-transparent px-5 py-3 font-semibold text-white transition-all duration-200 hover:bg-white hover:text-[#3154A5] sm:flex-1"
-              />
+              {!loggedIn ? (
+                <>
+                  <Button
+                    text="Sign in"
+                    onClick={handleSignIn}
+                    className="w-full rounded-xl border border-white/60 bg-transparent px-5 py-3 font-semibold text-white hover:bg-white hover:text-[#3154A5] sm:flex-1"
+                  />
 
-              <Button
-                text="Sign Up"
-                onClick={handleSignUp}
-                className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:bg-[#5BC0E3] hover:text-[#3154A5] sm:flex-1"
-              />
+                  <Button
+                    text="Sign Up"
+                    onClick={handleSignUp}
+                    className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5] sm:flex-1"
+                  />
+                </>
+              ) : (
+                <Button
+                  text="Logout"
+                  onClick={handleLogout}
+                  className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+                />
+              )}
             </div>
           </div>
         </div>
