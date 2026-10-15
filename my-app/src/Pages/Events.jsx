@@ -1,29 +1,20 @@
-import React from 'react'
-import { useState } from 'react'
+import React from "react";
+import { Card } from "../Components/Card";
+import E from "../assets/events.png";
+import Navbar from "../Components/Navbar";
 
 const Events = () => {
-  const [message,setMessage] = useState("")
-  const handleMessage =(e)=>{
-    setMessage(e.target.value)
-    console.log(message)
-  }
-  const [isLoggedIn,setIsLoggedIn] = useState(false)
-const handleIsLoggedIn =()=>{
-  setIsLoggedIn(!isLoggedIn);
-  
-}
-  const [count,setCount] = useState(0)
-  const handleCount =()=>{
-    setCount(count + 1)
-  }
   return (
-    <div className='flex items-center align-middle'>
-      <button onClick={handleCount}>{count}</button>
-      <button onClick={handleIsLoggedIn}>{isLoggedIn ? "Logout": "Login"}</button>
-      <input type="text" placeholder='Type a message' value={message} onChange={handleMessage}/>
-      <p>{message}</p>
+    <>
+    <Navbar />
+    <div className="w-full px-3 py-4 sm:px-5">
+      <Card
+        heading="Welcome to Our NET Family"
+        text="We're so happy to have you here! You're part of a family passionate about Christ, fellowship, and sharing His love. Come, grow with us, make meaningful connections, and let's win souls for Christ together."
+      />
     </div>
-  )
-}
+    </>
+  );
+};
 
-export default Events
+export default Events;

@@ -5,6 +5,7 @@ import AniamatedPage from "../Components/AniamatedPage";
 import Button from "../Components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { Mission } from "../Components/Mission";
+import Card from "../Components/Card";
 const Home = () => {
   const navigate = useNavigate();
   const handleSignUP = () => {
@@ -48,7 +49,7 @@ const Home = () => {
                 onClick={handleSignUP}
                 className="w-full rounded-full bg-[#762A7D] px-8 py-3.5 font-bold text-[#FFFFFF] shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-[#5BC0E3] hover:text-[#3154A5] hover:shadow-xl sm:w-auto"
               />
-
+             
               <Button
                 text="Login"
                 onClick={handleSignIn}
