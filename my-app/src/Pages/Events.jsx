@@ -10,6 +10,7 @@ const Events = () => {
   const [isLoggedIn,setIsLoggedIn] = useState(false)
 const handleIsLoggedIn =()=>{
   setIsLoggedIn(!isLoggedIn);
+  
 }
   const [count,setCount] = useState(0)
   const handleCount =()=>{

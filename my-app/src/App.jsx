@@ -9,6 +9,7 @@ import Navbar from "./Components/Navbar";
 import SignUp from "./Pages/SignUp";
 import SignIn from "./Pages/SignIn";
 import Outh from "./Components/Outh";
+import { Items } from "./Pages/Items";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -33,6 +34,7 @@ export default function App() {
 
   return (
     <>
+   
       {!hideNavbar && (
         <Navbar
           loggedIn={loggedIn}
@@ -55,8 +57,10 @@ export default function App() {
             path="signin"
             element={<SignIn onLogin={handleLogin} />}
           />
+          <Route path="item" element={<Items />} />
         </Route>
       </Routes>
-    </>
+  
+    </> 
   );
 }

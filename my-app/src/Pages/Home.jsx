@@ -4,6 +4,7 @@ import Footer from "../Components/Footer";
 import AniamatedPage from "../Components/AniamatedPage";
 import Button from "../Components/Button";
 import { Link, useNavigate } from "react-router-dom";
+import { Mission } from "../Components/Mission";
 const Home = () => {
   const navigate = useNavigate();
   const handleSignUP = () => {
@@ -57,6 +58,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      <Mission />
       <AniamatedPage />
       <Footer />
     </>

@@ -13,6 +13,7 @@ const Navbar = ({ loggedIn, onLogout }) => {
     { id: 2, name: "Events", to: "/events" },
     { id: 3, name: "About", to: "/about" },
     { id: 4, name: "Contact", to: "/contact" },
+    {id: 5,name: "Item" , to:'/item'}
   ];
 
   const handleSignUp = () => {
