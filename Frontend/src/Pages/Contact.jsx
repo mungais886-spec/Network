@@ -209,7 +209,7 @@ const Contact = () => {
               type="submit"
               className="w-full rounded-xl bg-[#762A7D] px-6 py-3.5 font-bold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#3154A5] hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5BC0E3]"
             >
-              Send Message →
+              Send Message 
             </button>
 
             <p className="mt-4 text-center text-xs leading-5 text-slate-500">

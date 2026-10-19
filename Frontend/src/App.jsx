@@ -9,6 +9,7 @@ import Events from "./Pages/Events";
 import Contact from "./Pages/Contact";
 import SignUp from "./Pages/SignUp";
 import SignIn from "./Pages/SignIn";
+import Profile from "./Components/Profile";
 
 function App() {
   return (
@@ -17,13 +18,14 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/events" element={<Events />} />
         </Route>
 
         <Route element={<Outh />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/events" element={<Events />} />
+          <Route path='/profile' element={<Profile />} />
         </Route>
       </Routes>
    

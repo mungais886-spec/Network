@@ -35,7 +35,10 @@ const Navbar = ({ loggedIn, onLogout }) => {
   const handleLinkClick = () => {
     setMenuOpen(false);
   };
-
+  
+  const handleProfile =() =>{
+    navigate("/profile")
+  }
   return (
     <header className="relative z-50 w-full border-b-4 border-[#762A7D] bg-[#3154A5] shadow-lg">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -168,6 +171,13 @@ const Navbar = ({ loggedIn, onLogout }) => {
                   className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
                 />
               )}
+              <div>
+                <Button
+                text="Profile"
+                onClick={handleProfile}
+                className="w-full rounded-[50%] bg-[#762A7D] px-3  font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+                />
+              </div>
             </div>
           </div>
         </div>
