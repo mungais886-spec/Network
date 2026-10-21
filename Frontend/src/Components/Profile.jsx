@@ -1,5 +1,6 @@
-
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiRequest } from "../Services/Api.js";
+import { useAuth } from "../Context/AuthContext";
 import {
   UserRound,
   ShieldCheck,
@@ -17,13 +18,50 @@ const Profile = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [user, setUser] = useState({
-    fullName: "Samson Mungai",
-    email: "samson@example.com",
-    phone: "+254 700 000 000",
+    fullName: "",
+    email: "",
+    phone: "",
     location: "Kenya",
-    bio: "Tell us a little about yourself.",
+    bio: "",
   });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { logout } = useAuth();
+  useEffect(() => {
+    let active = true;
+
+    async function loadProfile() {
+      try {
+        const data = await apiRequest("/member/profile");
+        const member = data.member ?? data.user ?? data;
+
+        if (active) {
+          setUser({
+            fullName: member.full_name ?? member.fullName ?? "",
+            email: member.email ?? "",
+            phone: member.phone ?? "",
+            location: "Kenya",
+            bio: "",
+          });
+        }
+      } catch (err) {
+        if (active) {
+          setError(err.message || "Unable to load your profile.");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProfile();
+
+    return () => {
+      active = false;
+    };
+  }, []);
   const navigation = [
     { name: "Profile", icon: UserRound },
     { name: "Security", icon: ShieldCheck },
@@ -35,11 +73,38 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/signin";
+  const handleLogout = async () => {
+    try {
+      await logout();
+      window.location.href = "/signin";
+    } catch (err) {
+      setError(err.message || "Unable to log out. Please try again.");
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-lg font-medium text-[#3154A5]">
+          Loading your profile...
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded-lg bg-[#3154A5] px-5 py-2 text-white"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-[#F5F8FC] text-black">
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#3154A5]/15 bg-white px-5 md:px-8">
@@ -55,9 +120,7 @@ const Profile = () => {
 
           <LayoutDashboard size={25} className="text-[#3154A5]" />
 
-          <span className="text-lg font-bold text-[#3154A5]">
-            My Account
-          </span>
+          <span className="text-lg font-bold text-[#3154A5]">My Account</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -81,9 +144,7 @@ const Profile = () => {
 
         <aside
           className={`fixed bottom-0 left-0 top-16 z-30 flex h-[calc(100vh-4rem)] w-64 flex-col border-r border-white/15 bg-[#3154A5] p-5 text-white transition-transform duration-300 md:sticky md:top-16 md:z-10 md:h-[calc(100vh-4rem)] md:shrink-0 ${
-            menuOpen
-              ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0"
+            menuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >
           <div className="mb-8 flex flex-col items-center border-b border-white/20 pb-6">
@@ -93,9 +154,7 @@ const Profile = () => {
 
             <h2 className="text-center font-bold">{user.fullName}</h2>
 
-            <p className="mt-1 text-sm text-white/75">
-              Personal Account
-            </p>
+            <p className="mt-1 text-sm text-white/75">Personal Account</p>
           </div>
 
           <nav className="flex-1 space-y-2">
@@ -132,9 +191,7 @@ const Profile = () => {
             <p className="text-xs font-semibold tracking-wide text-[#5BC0E3]">
               NETWORK EVANGELISTIC TEAM
             </p>
-            <p className="mt-1 text-xs text-white/70">
-              JOOUST Chapter
-            </p>
+            <p className="mt-1 text-xs text-white/70">JOOUST Chapter</p>
           </div>
         </aside>
 
@@ -180,11 +237,7 @@ const Profile = () => {
                   <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#3154A5]/25 px-4 py-2 text-sm font-semibold text-[#3154A5] transition hover:border-[#5BC0E3] hover:bg-[#5BC0E3]/10">
                     <Camera size={17} />
                     Change photo
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                    />
+                    <input type="file" accept="image/*" className="hidden" />
                   </label>
                 </div>
 

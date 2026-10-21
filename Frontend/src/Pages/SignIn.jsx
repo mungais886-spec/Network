@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import { useAuth } from "../Context/AuthContext";
 
-const SignIn = ({ onLogin }) => {
+const SignIn = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,39 +22,30 @@ const SignIn = ({ onLogin }) => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    const savedUser = localStorage.getItem("demoUser");
+  try {
+    await login(
+      formData.email.trim().toLowerCase(),
+      formData.password,
+    );
 
-    if (!savedUser) {
-      setError("No account found. Please create an account first.");
-      setLoading(false);
-      return;
+    navigate("/");
+  } catch (error) {
+    if (error.code === "PHONE_VERIFICATION_REQUIRED") {
+      setError(
+        "Please verify your phone number before logging in.",
+      );
+    } else {
+      setError(error.message || "Unable to sign in.");
     }
-
-    try {
-      const user = JSON.parse(savedUser);
-
-      if (
-        user.email.toLowerCase() !== formData.email.trim().toLowerCase() ||
-        user.password !== formData.password
-      ) {
-        setError("Invalid email or password.");
-        setLoading(false);
-        return;
-      }
-
-      onLogin();
-      navigate("/");
-    } catch {
-      setError("Unable to sign in. Please create your account again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#3154A5] via-[#233D7C] to-[#762A7D] px-4 py-12">

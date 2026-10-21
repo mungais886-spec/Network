@@ -1,19 +1,20 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import logo from "../assets/Logo.jpeg";
+import { useAuth } from "../Context/AuthContext";
 
-const Navbar = ({ loggedIn, onLogout }) => {
+const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, isAuthenticated, loading, logout } = useAuth();
 
   const navLinks = [
     { id: 1, name: "Home", to: "/" },
     { id: 2, name: "Events", to: "/events" },
     { id: 3, name: "About", to: "/about" },
     { id: 4, name: "Contact", to: "/contact" },
-    {id: 5,name: "Item" , to:'/item'}
+    { id: 5, name: "Item", to: "/item" },
   ];
 
   const handleSignUp = () => {
@@ -26,19 +27,25 @@ const Navbar = ({ loggedIn, onLogout }) => {
     navigate("/signin");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setMenuOpen(false);
-    onLogout();
-    navigate("/signin");
+
+    try {
+      await logout();
+      navigate("/signin");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Unable to log out. Please try again.");
+    }
   };
 
   const handleLinkClick = () => {
     setMenuOpen(false);
   };
-  
-  const handleProfile =() =>{
-    navigate("/profile")
-  }
+
+  const handleProfile = () => {
+    navigate("/profile");
+  };
   return (
     <header className="relative z-50 w-full border-b-4 border-[#762A7D] bg-[#3154A5] shadow-lg">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -84,7 +91,7 @@ const Navbar = ({ loggedIn, onLogout }) => {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            {!loggedIn ? (
+            {loading ? null : !isAuthenticated ? (
               <>
                 <Button
                   text="Sign in"
@@ -99,11 +106,27 @@ const Navbar = ({ loggedIn, onLogout }) => {
                 />
               </>
             ) : (
-              <Button
-                text="Logout"
-                onClick={handleLogout}
-                className="rounded-full bg-[#762A7D] px-6 py-2.5 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
-              />
+              <>
+                <Button
+                  text="Profile"
+                  onClick={handleProfile}
+                  className="rounded-full border border-white/60 bg-transparent px-5 py-2.5 font-semibold text-white hover:bg-white hover:text-[#3154A5]"
+                />
+
+                {user?.role === "admin" && (
+                  <Button
+                    text="Admin"
+                    onClick={() => navigate("/admin")}
+                    className="rounded-full border border-white/60 bg-transparent px-5 py-2.5 font-semibold text-white hover:bg-white hover:text-[#3154A5]"
+                  />
+                )}
+
+                <Button
+                  text="Logout"
+                  onClick={handleLogout}
+                  className="rounded-full bg-[#762A7D] px-6 py-2.5 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+                />
+              </>
             )}
           </div>
 
@@ -114,12 +137,32 @@ const Navbar = ({ loggedIn, onLogout }) => {
             aria-expanded={menuOpen}
           >
             {menuOpen ? (
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             ) : (
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             )}
           </button>
@@ -150,7 +193,7 @@ const Navbar = ({ loggedIn, onLogout }) => {
             </nav>
 
             <div className="mt-4 flex flex-col gap-3 border-t border-white/20 pt-4 sm:flex-row">
-              {!loggedIn ? (
+              {loading ? null : !isAuthenticated ? (
                 <>
                   <Button
                     text="Sign in"
@@ -165,19 +208,31 @@ const Navbar = ({ loggedIn, onLogout }) => {
                   />
                 </>
               ) : (
-                <Button
-                  text="Logout"
-                  onClick={handleLogout}
-                  className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
-                />
+                <>
+                  <Button
+                    text="Profile"
+                    onClick={handleProfile}
+                    className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-[#3154A5]"
+                  />
+
+                  {user?.role === "admin" && (
+                    <Button
+                      text="Admin"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        navigate("/admin");
+                      }}
+                      className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-[#3154A5]"
+                    />
+                  )}
+
+                  <Button
+                    text="Logout"
+                    onClick={handleLogout}
+                    className="w-full rounded-xl bg-[#762A7D] px-5 py-3 font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
+                  />
+                </>
               )}
-              <div>
-                <Button
-                text="Profile"
-                onClick={handleProfile}
-                className="w-full rounded-[50%] bg-[#762A7D] px-3  font-semibold text-white hover:bg-[#5BC0E3] hover:text-[#3154A5]"
-                />
-              </div>
             </div>
           </div>
         </div>

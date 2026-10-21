@@ -1,5 +1,10 @@
-
+import { Router } from "express";
+import { body, validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
+import { createHash, randomBytes } from "node:crypto";
 import pool from "../db.js";
+import { sendVerificationEmail } from "../services/emailService.js";
+
 
 // Check whether a member is logged in.
 export function requireAuth(req, res, next) {

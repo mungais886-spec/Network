@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import memberRoutes from "./routes/member.js";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import eventRoutes from "./routes/events.js";
 
 
 const app = express();
@@ -35,12 +36,15 @@ app.use(
     },
   })
 );
+app.use("/api/member", memberRoutes);
+app.use("/api/events", eventRoutes);
 
 const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
     origin: "http://localhost:5173",
+    credentials: true,
   }),
 );
 
