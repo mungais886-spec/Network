@@ -1,8 +1,8 @@
-
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import pool from "../db.js";
+import { randomBytes, createHash } from "node:crypto";
 
 const router = Router();
 
@@ -64,12 +64,7 @@ router.post(
           (full_name, email, phone, password_hash)
          VALUES ($1, $2, $3, $4)
          RETURNING id, full_name, email, phone, role, email_verified`,
-        [
-          full_name.trim(),
-          email.toLowerCase(),
-          phone.trim(),
-          passwordHash,
-        ]
+        [full_name.trim(), email.toLowerCase(), phone.trim(), passwordHash],
       );
 
       const member = result.rows[0];
@@ -78,15 +73,13 @@ router.post(
       const token = randomBytes(32).toString("hex");
 
       // Store only the token's hash in PostgreSQL.
-      const tokenHash = createHash("sha256")
-        .update(token)
-        .digest("hex");
+      const tokenHash = createHash("sha256").update(token).digest("hex");
 
       await pool.query(
         `INSERT INTO email_verifications
           (member_id, token_hash, expires_at)
          VALUES ($1, $2, NOW() + INTERVAL '15 minutes')`,
-        [member.id, tokenHash]
+        [member.id, tokenHash],
       );
 
       // Build the link the member will open from their email.
@@ -121,8 +114,7 @@ router.post(
     } catch (error) {
       if (error.code === "23505") {
         return res.status(409).json({
-          message:
-            "That email address or phone number is already registered.",
+          message: "That email address or phone number is already registered.",
         });
       }
 
@@ -132,15 +124,13 @@ router.post(
         message: "Unable to create your account right now.",
       });
     }
-  }
+  },
 );
-
 
 /**
 POST /api/auth/verify-email
   Verifies a member's email using the token sent by email.**/
 
-  
 router.post(
   "/verify-email",
   [
@@ -167,9 +157,7 @@ router.post(
 
     const { email, token } = req.body;
 
-    const tokenHash = createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
 
     const client = await pool.connect();
 
@@ -186,7 +174,7 @@ router.post(
            AND ev.used_at IS NULL
            AND ev.expires_at > NOW()
          FOR UPDATE OF ev`,
-        [email.toLowerCase(), tokenHash]
+        [email.toLowerCase(), tokenHash],
       );
 
       if (result.rowCount === 0) {
@@ -206,7 +194,7 @@ router.post(
         `UPDATE email_verifications
          SET used_at = NOW()
          WHERE id = $1`,
-        [verification.id]
+        [verification.id],
       );
 
       // Activate the member's account.
@@ -215,7 +203,7 @@ router.post(
          SET email_verified = TRUE,
              updated_at = NOW()
          WHERE id = $1`,
-        [verification.member_id]
+        [verification.member_id],
       );
 
       await client.query("COMMIT");
@@ -235,9 +223,88 @@ router.post(
     } finally {
       client.release();
     }
-  }
+  },
 );
 
+
+/**
+ * POST /api/auth/resend-verification
+ *
+ * Sends a fresh verification link to an unverified account.
+ */
+router.post(
+  "/resend-verification",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Enter a valid email address.")
+      .normalizeEmail(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: "Enter a valid email address.",
+      });
+    }
+
+    const email = req.body.email.toLowerCase();
+
+    try {
+      const result = await pool.query(
+        `SELECT id, email, email_verified
+         FROM members
+         WHERE email = $1`,
+        [email]
+      );
+
+      // Use the same general response to avoid revealing whether
+      // an email address belongs to a registered account.
+      const genericResponse = {
+        message:
+          "If this address belongs to an unverified account, a verification email will be sent.",
+      };
+
+      if (
+        result.rowCount === 0 ||
+        result.rows[0].email_verified
+      ) {
+        return res.status(200).json(genericResponse);
+      }
+
+      const member = result.rows[0];
+
+      const token = randomBytes(32).toString("hex");
+
+      const tokenHash = createHash("sha256")
+        .update(token)
+        .digest("hex");
+
+      await pool.query(
+        `INSERT INTO email_verifications
+          (member_id, token_hash, expires_at)
+         VALUES ($1, $2, NOW() + INTERVAL '15 minutes')`,
+        [member.id, tokenHash]
+      );
+
+      const verificationUrl =
+        `${process.env.FRONTEND_URL}/verify-email` +
+        `?token=${token}&email=${encodeURIComponent(member.email)}`;
+
+      await sendVerificationEmail(member.email, verificationUrl);
+
+      return res.status(200).json(genericResponse);
+    } catch (error) {
+      console.error("Resend verification error:", error.message);
+
+      return res.status(500).json({
+        message:
+          "Unable to process your request right now. Please try again later.",
+      });
+    }
+  }
+);
 
 
 router.post(
@@ -273,12 +340,11 @@ router.post(
     try {
       // Find the account by email.
       const result = await pool.query(
-        `SELECT id, full_name, email, phone,
-                password_hash, role, phone_verified
-         FROM members
-         WHERE email = $1
-         LIMIT 1`,
-        [email]
+        `SELECT id, full_name, email, phone, password_hash,
+          role, email_verified
+   FROM members
+   WHERE email = $1`,
+        [email.toLowerCase()],
       );
 
       const member = result.rows[0];
@@ -291,13 +357,12 @@ router.post(
       }
 
       // Require phone verification before allowing login.
-      if (!member.phone_verified) {
+      if (!member.email_verified) {
         return res.status(403).json({
-          message: "Please verify your phone number before logging in.",
-          code: "PHONE_VERIFICATION_REQUIRED",
+          message: "Please verify your email address before logging in.",
+          code: "EMAIL_VERIFICATION_REQUIRED",
         });
       }
-
       // Regenerate the session ID after successful authentication.
       await new Promise((resolve, reject) => {
         req.session.regenerate((error) => {
@@ -333,9 +398,8 @@ router.post(
         message: "Unable to log in right now.",
       });
     }
-  }
+  },
 );
-
 
 router.get("/me", (req, res) => {
   if (!req.session.member) {
@@ -370,6 +434,5 @@ router.post("/logout", (req, res) => {
     });
   });
 });
-
 
 export default router;

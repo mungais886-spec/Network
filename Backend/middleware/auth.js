@@ -3,7 +3,7 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes } from "node:crypto";
 import pool from "../db.js";
-import { sendVerificationEmail } from "../services/emailService.js";
+import { sendVerificationEmail } from "../Service/emailService.js";
 
 
 // Check whether a member is logged in.

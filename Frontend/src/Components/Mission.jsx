@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Eye,
   Target,
@@ -14,6 +14,18 @@ import {
 } from "lucide-react";
 
 export const Mission = () => {
+  const reduce = useReducedMotion();
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: reduce ? 0 : 24 },
+    visible: { opacity: 1, y: 0, transition: { duration: reduce ? 0 : 0.5, ease: "easeOut" } },
+  };
+
+  const stagger = {
+    hidden: {},
+    visible: { transition: { staggerChildren: reduce ? 0 : 0.08 } },
+  };
+
   const objectives = [
     {
       id: 1,
@@ -50,200 +62,152 @@ export const Mission = () => {
     { id: 5, name: "Equity", icon: Scale },
   ];
 
-  const cards = [
+  const panel = [
     {
       id: 1,
-      title: "Our Vision",
+      title: "Vision",
       icon: Eye,
       text: "The avenue for reaching out, evangelizing and making disciples for Christ.",
     },
     {
       id: 2,
-      title: "Our Mission",
+      title: "Mission",
       icon: Target,
       text: "To proclaim the gospel of Christ and nurture true disciples of all nations.",
     },
-    {
-      id: 3,
-      title: "Our Motto",
-      icon: Quote,
-      text: "Expanding the Kingdom of God.",
-    },
   ];
 
-  const reveal = {
-    hidden: { opacity: 0, y: 35 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
   return (
-    <section className="w-full bg-[#481d4c]/50 px-4 py-12 sm:px-6 lg:px-10">
+    <section className="relative z-10 -mt-14 bg-[linear-gradient(to_bottom,transparent_56px,white_56px)] px-5 pb-14 sm:px-8 lg:px-12 lg:pb-20">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          variants={reveal}
+          className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl shadow-slate-300/60"
+          variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          className="mb-8 text-center"
+          viewport={{ once: true, amount: 0.2 }}
         >
-          <div className="mb-5 inline-flex items-center rounded-full border border-[#5BC0E3]/70 bg-[#3154A5]/80 px-4 py-2 shadow-lg backdrop-blur-sm">
-            <span className="mr-2 h-2 w-2 rounded-full bg-[#5BC0E3]"></span>
-
-            <span className="text-xs font-semibold tracking-wide text-white sm:text-sm">
-              Welcome to Network Evangelistic Team — Jooust Chapter
-            </span>
+          <div className="grid divide-y divide-slate-200 md:grid-cols-2 md:divide-x md:divide-y-0">
+            {panel.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.id} className="flex gap-4 p-6 sm:p-8">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#3855A5] text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#3855A5]">{item.title}</h3>
+                    <p className="mt-1.5 leading-relaxed text-slate-600">{item.text}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          <h2 className="text-3xl font-extrabold text-[#263f91] sm:text-4xl">
-            Our Foundation
-          </h2>
-
-          <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-[#65cce5]" />
+          <div className="relative flex flex-col items-center justify-center gap-2 overflow-hidden bg-[#762A7D] px-6 py-4 text-center sm:flex-row sm:gap-4">
+            <div className="pointer-events-none absolute -left-8 -top-10 h-24 w-24 rounded-full border-[3px] border-white/15" />
+            <div className="pointer-events-none absolute -bottom-10 -right-8 h-24 w-24 rounded-full border-[3px] border-[#6BCDF2]/30" />
+            <span className="relative flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#6BCDF2]">
+              <Quote className="h-4 w-4" />
+              Our motto
+            </span>
+            <p className="relative text-lg font-semibold italic text-white">
+              Expanding the Kingdom of God.
+            </p>
+          </div>
         </motion.div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card, index) => {
-            const Icon = card.icon;
-
-            return (
-              <motion.div
-                key={card.id}
-                variants={reveal}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ delay: index * 0.15 }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className="group rounded-2xl border border-[#743779]/20 bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-xl"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#65cce5]/20 text-[#263f91] transition-colors duration-300 group-hover:bg-[#263f91] group-hover:text-white">
-                  <Icon size={25} />
-                </div>
-
-                <h3 className="mb-3 text-xl font-bold text-[#263f91]">
-                  {card.title}
-                </h3>
-
-                <p className="text-sm leading-7 text-gray-600">{card.text}</p>
-
-                <div className="mt-5 h-1 w-12 rounded-full bg-[#743779] transition-all duration-300 group-hover:w-20" />
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
-          <div>
-            <motion.div
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="mb-5"
+        <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_1.7fr] lg:gap-14">
+          <motion.div
+            className="lg:sticky lg:top-24 lg:self-start"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <motion.span
+              variants={fadeUp}
+              className="inline-block rounded-full border border-[#762A7D]/30 bg-[#762A7D]/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-[#762A7D]"
             >
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#743779]">
-                Our Purpose
-              </p>
+              What drives us
+            </motion.span>
+            <motion.h2
+              variants={fadeUp}
+              className="mt-4 text-3xl font-bold leading-tight text-[#3855A5] sm:text-4xl"
+            >
+              Our Objectives
+            </motion.h2>
+            <motion.p variants={fadeUp} className="mt-3 max-w-sm leading-relaxed text-slate-600">
+              Five commitments that shape how we serve, pray and grow together.
+            </motion.p>
+            <motion.div
+              variants={fadeUp}
+              className="mt-5 h-1 w-16 rounded-full bg-gradient-to-r from-[#3855A5] via-[#6BCDF2] to-[#762A7D]"
+            />
+          </motion.div>
 
-              <h3 className="mt-1 text-2xl font-extrabold text-[#263f91]">
-                Aims & Objectives
-              </h3>
-            </motion.div>
-
-            <div className="space-y-3">
-              {objectives.map((objective, index) => {
-                const Icon = objective.icon;
-
-                return (
-                  <motion.div
-                    key={objective.id}
-                    variants={reveal}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.15 }}
-                    transition={{ delay: index * 0.08 }}
-                    className="flex gap-4 rounded-xl border border-[#263f91]/10 bg-[#f5faff] p-4 transition-colors duration-300 hover:border-[#65cce5] hover:bg-[#65cce5]/10"
-                  >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#263f91] text-white">
-                      <Icon size={19} />
+          <motion.ol
+            className="relative"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            <div className="absolute bottom-6 left-5 top-6 w-px bg-gradient-to-b from-[#3855A5]/40 via-[#6BCDF2]/50 to-[#762A7D]/40" />
+            {objectives.map((item) => {
+              const Icon = item.icon;
+              return (
+                <motion.li
+                  key={item.id}
+                  variants={fadeUp}
+                  className="group relative flex gap-5 pb-6 last:pb-0"
+                >
+                  <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#3855A5] text-sm font-bold text-white ring-4 ring-white transition-colors duration-300 group-hover:bg-[#762A7D]">
+                    {item.id}
+                  </div>
+                  <div className="flex-1 rounded-xl border border-transparent px-4 py-2 transition-colors duration-300 group-hover:border-slate-200 group-hover:bg-slate-50">
+                    <div className="flex items-start gap-3">
+                      <Icon className="mt-1 h-5 w-5 shrink-0 text-[#6BCDF2]" />
+                      <p className="leading-relaxed text-slate-700">{item.text}</p>
                     </div>
-
-                    <p className="text-sm leading-6 text-gray-700">
-                      {objective.text}
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <motion.div
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="mb-5"
-            >
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#743779]">
-                What Guides Us
-              </p>
-
-              <h3 className="mt-1 text-2xl font-extrabold text-[#263f91]">
-                Core Values
-              </h3>
-            </motion.div>
-
-            <motion.div
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="rounded-2xl border border-[#743779]/20 bg-white p-5 shadow-md"
-            >
-              <p className="mb-5 text-sm leading-6 text-gray-600">
-                Our values guide our fellowship, service, evangelism and
-                commitment to Christ.
-              </p>
-
-              <div className="space-y-3">
-                {values.map((value, index) => {
-                  const Icon = value.icon;
-
-                  return (
-                    <motion.div
-                      key={value.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ delay: index * 0.1, duration: 0.4 }}
-                      className="flex items-center gap-3 rounded-lg bg-[#f5faff] p-3 transition-colors duration-300 hover:bg-[#65cce5]/20"
-                    >
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#263f91] text-white">
-                        <Icon size={18} />
-                      </div>
-
-                      <span className="font-semibold text-[#263f91]">
-                        {value.name}
-                      </span>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </div>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </motion.ol>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-10 flex items-center justify-center gap-2 text-center text-sm font-medium text-[#743779]"
+          className="mt-14 border-t border-slate-200 pt-10"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
         >
+          <motion.div variants={fadeUp} className="text-center">
+            <h2 className="text-2xl font-bold text-[#3855A5] sm:text-3xl">Our Core Values</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              The principles that guide everything we do.
+            </p>
+          </motion.div>
+
+          <div className="mt-8 grid grid-cols-2 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-y-0 lg:divide-x lg:divide-slate-200">
+            {values.map((value) => {
+              const Icon = value.icon;
+              return (
+                <motion.div
+                  key={value.id}
+                  variants={fadeUp}
+                  className="group flex flex-col items-center gap-3 px-4 text-center"
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#6BCDF2]/25 text-[#3855A5] transition duration-300 group-hover:scale-110 group-hover:bg-[#3855A5] group-hover:text-white">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <p className="text-base font-semibold text-[#3855A5]">{value.name}</p>
+                </motion.div>
+              );
+            })}
+          </div>
         </motion.div>
       </div>
     </section>

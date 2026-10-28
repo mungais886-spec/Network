@@ -1,42 +1,5 @@
 @import "tailwindcss";
 
-@keyframes winningSoulsWave {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  15% {
-    transform: translateY(-4px) rotate(-0.3deg);
-  }
-
-  30% {
-    transform: translateY(-7px) rotate(0.2deg);
-  }
-
-  45% {
-    transform: translateY(-2px) rotate(0deg);
-  }
-
-  60% {
-    transform: translateY(4px) rotate(0.3deg);
-  }
-
-  75% {
-    transform: translateY(7px) rotate(-0.2deg);
-  }
-
-  90% {
-    transform: translateY(2px) rotate(0deg);
-  }
-
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-}
-
-.winning-text {
-  animation: winningSoulsWave 6s ease-in-out infinite;
-}
 
 @keyframes verseEnter {
   from {
@@ -74,7 +37,7 @@
 
 @keyframes verseMove {
   from {
-    transform: translateX(-50%);
+    transform: translateY(-50%);
   }
 
   to {

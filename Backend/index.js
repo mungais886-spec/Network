@@ -64,6 +64,7 @@ app.get("/api/db-test", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT NOW() AS current_time, current_database() AS database_name",
+      console.log(message)
     );
 
     res.json({

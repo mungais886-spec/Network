@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import logo from "../assets/Logo.jpeg";
 import { useAuth } from "../Context/AuthContext";
+import HeaderCard from "./HeaderCard";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +15,7 @@ const Navbar = () => {
     { id: 2, name: "Events", to: "/events" },
     { id: 3, name: "About", to: "/about" },
     { id: 4, name: "Contact", to: "/contact" },
-    { id: 5, name: "Item", to: "/item" },
+    { id: 5, name: "Learders", to: "/learders" },
   ];
 
   const handleSignUp = () => {
@@ -47,7 +48,9 @@ const Navbar = () => {
     navigate("/profile");
   };
   return (
-    <header className="relative z-50 w-full border-b-4 border-[#762A7D] bg-[#3154A5] shadow-lg">
+    <>
+    <HeaderCard />
+        <header className="relative z-50 w-full border-b-4 border-[#762A7D] bg-[#3154A5] shadow-lg">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <Link
@@ -238,6 +241,7 @@ const Navbar = () => {
         </div>
       </div>
     </header>
+    </>
   );
 };
 

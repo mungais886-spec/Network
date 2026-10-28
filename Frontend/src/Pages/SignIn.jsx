@@ -35,9 +35,9 @@ const SignIn = () => {
 
     navigate("/");
   } catch (error) {
-    if (error.code === "PHONE_VERIFICATION_REQUIRED") {
+    if (error.code === "EMAIL_VERIFICATION_REQUIRED") {
       setError(
-        "Please verify your phone number before logging in.",
+        "Please verify your email before logging in.Check your inbox for the verification link",
       );
     } else {
       setError(error.message || "Unable to sign in.");
