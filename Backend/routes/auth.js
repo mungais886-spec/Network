@@ -3,6 +3,7 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import pool from "../db.js";
 import { randomBytes, createHash } from "node:crypto";
+import { sendVerificationEmail } from "../Service/emailService.js";
 
 const router = Router();
 
@@ -88,7 +89,12 @@ router.post(
         `?token=${token}&email=${encodeURIComponent(member.email)}`;
 
       try {
-        await sendVerificationEmail(member.email, verificationUrl);
+        const emailResult = await sendVerificationEmail(
+          member.email,
+          verificationUrl,
+        );
+
+        console.log("Verification email resent:", emailResult.id);
       } catch (emailError) {
         console.error("Verification email could not be sent.");
 
@@ -226,7 +232,6 @@ router.post(
   },
 );
 
-
 /**
  * POST /api/auth/resend-verification
  *
@@ -256,7 +261,7 @@ router.post(
         `SELECT id, email, email_verified
          FROM members
          WHERE email = $1`,
-        [email]
+        [email],
       );
 
       // Use the same general response to avoid revealing whether
@@ -266,10 +271,7 @@ router.post(
           "If this address belongs to an unverified account, a verification email will be sent.",
       };
 
-      if (
-        result.rowCount === 0 ||
-        result.rows[0].email_verified
-      ) {
+      if (result.rowCount === 0 || result.rows[0].email_verified) {
         return res.status(200).json(genericResponse);
       }
 
@@ -277,15 +279,13 @@ router.post(
 
       const token = randomBytes(32).toString("hex");
 
-      const tokenHash = createHash("sha256")
-        .update(token)
-        .digest("hex");
+      const tokenHash = createHash("sha256").update(token).digest("hex");
 
       await pool.query(
         `INSERT INTO email_verifications
           (member_id, token_hash, expires_at)
          VALUES ($1, $2, NOW() + INTERVAL '15 minutes')`,
-        [member.id, tokenHash]
+        [member.id, tokenHash],
       );
 
       const verificationUrl =
@@ -303,9 +303,8 @@ router.post(
           "Unable to process your request right now. Please try again later.",
       });
     }
-  }
+  },
 );
-
 
 router.post(
   "/login",

@@ -4,6 +4,7 @@ import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
 import { Mission } from "../Components/Mission";
 import Events from "./Events";
+import { Devotional } from "../Components/Devotional";
 
 
 const headlineLines = [
@@ -171,6 +172,7 @@ const Home = () => {
         </div>
       </section>
       <Mission />
+      <Devotional />
       <Events />
       <Footer />
     </>

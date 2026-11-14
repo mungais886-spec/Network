@@ -2,17 +2,32 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+
 import pool from "./db.js";
 import authRoutes from "./routes/auth.js";
 import memberRoutes from "./routes/member.js";
-import session from "express-session";
-import connectPgSimple from "connect-pg-simple";
 import eventRoutes from "./routes/events.js";
-
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
+if (!process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET is missing from .env");
+}
+
 const PgSession = connectPgSimple(session);
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+app.use(express.json());
 
 app.use(
   session({
@@ -36,21 +51,10 @@ app.use(
     },
   })
 );
-app.use("/api/member", memberRoutes);
-app.use("/api/events", eventRoutes);
-
-const PORT = process.env.PORT || 3000;
-
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  }),
-);
-
-app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/member", memberRoutes);
+app.use("/api/events", eventRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the church website backend");
@@ -63,8 +67,7 @@ app.get("/api/test", (req, res) => {
 app.get("/api/db-test", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT NOW() AS current_time, current_database() AS database_name",
-      console.log(message)
+      "SELECT NOW() AS current_time, current_database() AS database_name"
     );
 
     res.json({

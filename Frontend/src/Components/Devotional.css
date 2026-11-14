@@ -1,0 +1,35 @@
+.verse-enter {
+  animation: verseEnter 0.8s ease forwards;
+}
+
+.verse-exit {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+@keyframes verseEnter {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.verse-progress {
+  width: 0;
+  animation: progress 10s linear forwards;
+}
+
+@keyframes progress {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}

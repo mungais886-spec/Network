@@ -1,46 +1,57 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { apiRequest } from "../Services/Api.js";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
 
-  // Read the token and email from the verification link.
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("idle");
 
-  async function handleVerification() {
-    if (!token || !email) {
-      setStatus("error");
-      setMessage(
-        "This verification link is incomplete. Please check your email for the correct link."
-      );
-      return;
+  useEffect(() => {
+    let active = true;
+
+    async function handleVerification() {
+      if (!token || !email) {
+        setStatus("error");
+        setMessage("This verification link is incomplete or invalid.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await apiRequest("/auth/verify-email", {
+          method: "POST",
+          body: JSON.stringify({ token, email }),
+        });
+
+        if (!active) return;
+
+        setStatus("success");
+        setMessage(data.message);
+      } catch (error) {
+        if (!active) return;
+
+        setStatus("error");
+        setMessage(error.message);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
     }
 
-    setLoading(true);
-    setMessage("");
+    handleVerification();
 
-    try {
-      const data = await apiRequest("/auth/verify-email", {
-        method: "POST",
-        body: JSON.stringify({ token, email }),
-      });
-
-      setStatus("success");
-      setMessage(data.message);
-    } catch (error) {
-      setStatus("error");
-      setMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    return () => {
+      active = false;
+    };
+  }, [token, email]);
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
@@ -51,8 +62,7 @@ export default function VerifyEmail() {
           </h1>
 
           <p className="mt-3 text-sm text-gray-600">
-            Confirm your email address to activate your church community
-            account.
+            Confirm your email address to activate your church community account.
           </p>
         </div>
 
@@ -62,7 +72,13 @@ export default function VerifyEmail() {
           </p>
         )}
 
-        {message && (
+        {loading && (
+          <p className="text-center text-sm text-gray-600">
+            Verifying your email address...
+          </p>
+        )}
+
+        {!loading && message && (
           <div
             role="status"
             className={`mb-5 rounded-lg p-3 text-sm ${
@@ -75,23 +91,21 @@ export default function VerifyEmail() {
           </div>
         )}
 
-        {status !== "success" && (
-          <button
-            type="button"
-            onClick={handleVerification}
-            disabled={loading}
-            className="w-full rounded-lg bg-[#3154A5] px-4 py-3 font-semibold text-white transition hover:bg-[#233D7C] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? "Verifying..." : "Verify My Email"}
-          </button>
-        )}
-
-        {status === "success" && (
+        {!loading && status === "success" && (
           <Link
             to="/signin"
             className="block w-full rounded-lg bg-[#3154A5] px-4 py-3 text-center font-semibold text-white transition hover:bg-[#233D7C]"
           >
             Continue to Sign In
+          </Link>
+        )}
+
+        {!loading && status === "error" && (
+          <Link
+            to="/signin"
+            className="block w-full rounded-lg bg-[#3154A5] px-4 py-3 text-center font-semibold text-white transition hover:bg-[#233D7C]"
+          >
+            Return to Sign In
           </Link>
         )}
 
