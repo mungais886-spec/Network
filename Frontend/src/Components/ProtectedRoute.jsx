@@ -1,17 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const [user, setUser] = useState(undefined);
+  const { user, loading } = useAuth();
 
-  useEffect(() => onAuthStateChanged(auth, setUser), []);
-
-  if (user === undefined) {
-    return <p className="p-10 text-center text-slate-500">Loading…</p>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-[#3154A5]">Checking authentication...</p>
+      </div>
+    );
   }
-  return user ? children : <Navigate to="/admin/login" replace />;
+
+  if (!user) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return children || <Outlet />;
 };
 
 export default ProtectedRoute;

@@ -1,19 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 const AdminRoute = ({ children }) => {
-  const [user, setUser] = useState(undefined);
+  const { user, loading } = useAuth();
 
-  useEffect(() => onAuthStateChanged(auth, setUser), []);
-
-  if (user === undefined) {
-    return <p className="p-10 text-center text-slate-500">Loading…</p>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="font-medium text-[#3154A5]">
+          Checking administrator access...
+        </p>
+      </div>
+    );
   }
 
-  const isAdmin = user && user.email === import.meta.env.VITE_ADMIN_EMAIL;
-  return isAdmin ? children : <Navigate to="/admin/login" replace />;
+  if (!user) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  if (user.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children || <Outlet />;
 };
 
 export default AdminRoute;
