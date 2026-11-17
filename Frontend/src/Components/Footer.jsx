@@ -1,272 +1,242 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  MapPin,
+  ChevronRight,
+  Heart,
+  Mail,
+} from "lucide-react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaWhatsapp,
+} from "react-icons/fa";
+import logo from "../assets/Logo.jpeg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const quickLinks = [
+    { name: "Home", to: "/" },
+    { name: "About Us", to: "/about" },
+    { name: "Our Events", to: "/events" },
+    { name: "Contact Us", to: "/contact" },
+    { name: "Join Our Fellowship", to: "/signup" },
+  ];
+
+  const ministryLinks = [
+    { name: "Evangelism", to: "/events" },
+    { name: "Outreach Programs", to: "/events" },
+    { name: "Fellowship", to: "/events" },
+    { name: "Bible Study", to: "/events" },
+    { name: "Prayer & Worship", to: "/events" },
+  ];
+
+  const socialLinks = [
+    { name: "Facebook", icon: FaFacebookF, url: "#" },
+    { name: "Instagram", icon: FaInstagram, url: "#" },
+    { name: "YouTube", icon: FaYoutube, url: "#" },
+    { name: "WhatsApp", icon: FaWhatsapp, url: "#" },
+  ];
+
   return (
-    <footer className="relative overflow-hidden bg-[#3d023cdc] text-white">
-      <div className="absolute -left-32 -top-32 h-72 w-72 rounded-full bg-[#3154A5]/20 blur-3xl"></div>
-      <div className="absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-[#762A7D]/20 blur-3xl"></div>
+    <footer className="relative overflow-hidden bg-[#8B5A91] text-white">
+      <div className="relative mx-auto max-w-7xl px-5 pb-12 pt-16 sm:px-8 lg:px-10">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.9fr_1fr] lg:gap-10">
+          <div>
+            <Link to="/" className="group inline-flex items-center gap-3">
+              <img
+                src={logo}
+                alt="Network Evangelistic Team Logo"
+                className="h-14 w-14 rounded-full border-2 border-white/70 bg-white object-contain p-1 shadow-lg transition duration-300 group-hover:scale-105"
+              />
 
-      <div className="relative border-b border-white/10">
-        <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-            
-            <div className="lg:col-span-1">
-              <Link to="/" className="group inline-flex items-center gap-3">
-                <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-[#5BC0E3] opacity-30 blur-md transition duration-300 group-hover:opacity-60"></div>
+              <div>
+                <h2 className="text-lg font-extrabold leading-tight tracking-tight">
+                  Network
+                  <span className="text-white/75"> Evangelistic</span>
+                  <span> Team</span>
+                </h2>
 
-                  <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white p-1 shadow-lg">
-                    <img
-                      src="/src/assets/Logo.jpeg"
-                      alt="Network Evangelistic Team Logo"
-                      className="h-full w-full rounded-full object-contain"
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65">
+                  JOOUST Chapter
+                </p>
+              </div>
+            </Link>
+
+            <p className="mt-6 max-w-sm text-sm leading-7 text-white/85">
+              Winning souls for Christ through the proclamation of the Gospel,
+              sharing God's love, and raising a generation passionate about
+              serving Christ.
+            </p>
+
+            <div className="mt-7">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/65">
+                Follow our journey
+              </p>
+
+              <div className="flex items-center gap-2.5">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      aria-label={social.name}
+                      target={social.url === "#" ? undefined : "_blank"}
+                      rel={social.url === "#" ? undefined : "noreferrer"}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/25 bg-white/[0.10] text-white/90 transition duration-300 hover:-translate-y-1 hover:border-white/50 hover:bg-white/20 hover:text-white"
+                    >
+                      <Icon size={16} />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
+              <span className="h-5 w-1 rounded-full bg-white/70" />
+              Quick Links
+            </h3>
+
+            <ul className="space-y-3.5">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.to}
+                    className="group inline-flex items-center gap-2 text-sm text-white/80 transition duration-200 hover:translate-x-1 hover:text-white"
+                  >
+                    <ChevronRight
+                      size={14}
+                      className="text-white/60 transition group-hover:text-white"
                     />
-                  </div>
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
+              <span className="h-5 w-1 rounded-full bg-white/70" />
+              Our Ministry
+            </h3>
+
+            <ul className="space-y-3.5">
+              {ministryLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.to}
+                    className="group inline-flex items-center gap-2 text-sm text-white/80 transition duration-200 hover:translate-x-1 hover:text-white"
+                  >
+                    <ChevronRight
+                      size={14}
+                      className="text-white/60 transition group-hover:text-white"
+                    />
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
+              <span className="h-5 w-1 rounded-full bg-white/70" />
+              Get in Touch
+            </h3>
+
+            <p className="mb-5 text-sm leading-6 text-white/80">
+              We'd love to hear from you. Connect with our team and be part of
+              what God is doing through this ministry.
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/25 bg-white/[0.10] text-white">
+                  <MapPin size={17} />
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-extrabold leading-tight">
-                    Network
-                    <span className="text-[#5BC0E3]"> Evangelistic</span>
-                    <span> Team</span>
-                  </h2>
-
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-white/50">
-                    Jooust Chapter
+                  <p className="text-xs font-semibold text-white">
+                    Our Location
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-white/80">
+                    Jaramogi Oginga Odinga University of Science and Technology
+                    <br />
+                    Bondo, Kenya
                   </p>
                 </div>
-              </Link>
-
-              <p className="mt-5 max-w-sm text-sm leading-7 text-white/60">
-                Winning souls for Christ by sharing the Gospel, spreading the
-                love of God, and building a generation passionate about
-                serving Christ.
-              </p>
-
-              <div className="mt-6 flex gap-3">
-                <a
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#3154A5]/30 text-sm font-bold transition duration-300 hover:-translate-y-1 hover:bg-[#5BC0E3] hover:text-[#000000]"
-                  aria-label="Facebook"
-                >
-                  f
-                </a>
-
-                <a
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#3154A5]/30 text-sm font-bold transition duration-300 hover:-translate-y-1 hover:bg-[#5BC0E3] hover:text-[#000000]"
-                  aria-label="Instagram"
-                >
-                  ig
-                </a>
-
-                <a
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#3154A5]/30 text-sm font-bold transition duration-300 hover:-translate-y-1 hover:bg-[#5BC0E3] hover:text-[#000000]"
-                  aria-label="YouTube"
-                >
-                  ▶
-                </a>
-
-                <a
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#3154A5]/30 text-sm font-bold transition duration-300 hover:-translate-y-1 hover:bg-[#5BC0E3] hover:text-[#000000]"
-                  aria-label="WhatsApp"
-                >
-                  wa
-                </a>
               </div>
-            </div>
 
-            <div>
-              <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-[#5BC0E3]">
-                Quick Links
-              </h3>
-
-              <ul className="space-y-3 text-sm text-white/60">
-                <li>
-                  <Link
-                    to="/"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Home
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Events
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/about"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    About Us
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/contact"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/signup"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Join Us
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-[#5BC0E3]">
-                Our Ministry
-              </h3>
-
-              <ul className="space-y-3 text-sm text-white/60">
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Evangelism
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Outreach Programs
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Fellowship
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Bible Study
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/events"
-                    className="transition duration-200 hover:pl-1 hover:text-[#5BC0E3]"
-                  >
-                    Prayer & Worship
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-5 text-sm font-bold uppercase tracking-wider text-[#5BC0E3]">
-                Stay Connected
-              </h3>
-
-              <p className="text-sm leading-6 text-white/60">
-                Stay updated with our upcoming events, outreaches, and
-                activities.
-              </p>
-
-              <div className="mt-5 flex overflow-hidden rounded-xl border border-white/10 bg-white/5">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white outline-none placeholder:text-white/30"
+              <Link
+                to="/contact"
+                className="group inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/[0.10] px-4 py-3 text-sm font-semibold text-white transition duration-300 hover:border-white/60 hover:bg-white/20"
+              >
+                <Mail size={16} />
+                Contact Our Team
+                <ArrowUpRight
+                  size={16}
+                  className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 />
-
-                <button className="bg-[#762A7D] px-4 text-sm font-semibold text-white transition duration-300 hover:bg-[#5BC0E3] hover:text-[#000000]">
-                  Join
-                </button>
-              </div>
-
-              <div className="mt-6 space-y-3 text-sm text-white/60">
-                <p className="flex items-start gap-3">
-                  <span className="text-[#5BC0E3]"></span>
-                  <span>Network Evangelistic Team</span>
-                </p>
-
-                <p className="flex items-start gap-3">
-                  <span className="text-[#5BC0E3]"></span>
-                  <span>Jooust Chapter</span>
-                </p>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="relative border-b border-white/10 bg-[#3154A5]/20">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-5 text-center sm:px-6 md:flex-row md:text-left lg:px-8">
-          <div>
-            <p className="text-sm font-semibold text-white">
-              Winning Souls. Changing Lives. Glorifying Christ.
-            </p>
+        <div className="mt-14 rounded-2xl border border-white/25 bg-white/[0.10] px-6 py-7 sm:px-8">
+          <div className="flex flex-col items-center justify-between gap-5 text-center md:flex-row md:text-left">
+            <div>
+              <p className="text-base font-extrabold text-white sm:text-lg">
+                Winning Souls. Changing Lives. Glorifying Christ.
+              </p>
+              <p className="mt-2 text-sm text-white/80">
+                Expanding the Kingdom of God.
+              </p>
+            </div>
 
-            <p className="mt-1 text-xs text-white/40">
-              Network Evangelistic Team — Jooust Chapter
-            </p>
+            <Link
+              to="/signup"
+              className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#8B5A91] shadow-lg transition duration-300 hover:-translate-y-1 hover:bg-white/90"
+            >
+              Become Part of Us
+              <ArrowUpRight
+                size={17}
+                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </Link>
           </div>
-
-          <Link
-            to="/contact"
-            className="rounded-full border border-[#5BC0E3]/50 px-5 py-2 text-xs font-semibold text-[#5BC0E3] transition duration-300 hover:bg-[#5BC0E3] hover:text-[#000000]"
-          >
-            Get Involved
-          </Link>
         </div>
       </div>
 
-      <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs text-white/40 sm:px-6 md:flex-row md:text-left lg:px-8">
-        <p>
-          © {currentYear} Network Evangelistic Team — Jooust Chapter. All
-          rights reserved.
-        </p>
+      <div className="relative border-t border-white/20 bg-[#8B5A91]">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-5 text-center sm:px-8 md:flex-row md:text-left lg:px-10">
+          <p className="text-xs leading-5 text-white/75">
+            © {currentYear} Network Evangelistic Team — JOOUST Chapter. All
+            rights reserved.
+          </p>
 
-        <div className="flex gap-5">
-          <Link
-            to="/privacy"
-            className="transition hover:text-[#5BC0E3]"
-          >
-            Privacy
-          </Link>
+          <div className="flex items-center gap-5 text-xs text-white/75">
+            <Link to="/privacy" className="transition hover:text-white">
+              Privacy
+            </Link>
 
-          <Link
-            to="/terms"
-            className="transition hover:text-[#5BC0E3]"
-          >
-            Terms
-          </Link>
+            <Link to="/terms" className="transition hover:text-white">
+              Terms
+            </Link>
+
+            <span className="flex items-center gap-1.5">
+              Made with
+              <Heart size={12} className="fill-white/80 text-white/80" />
+            </span>
+          </div>
         </div>
       </div>
     </footer>

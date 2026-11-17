@@ -17,6 +17,13 @@ import Events from "./Pages/Events";
 import Admin from "./Pages/Admin";
 import AdminLogin from "./Pages/AdminLogin";
 import Events1 from "./Components/Events1";
+<<<<<<< Updated upstream
+=======
+import { Devotional } from "./Components/Devotional";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import Welcome from "./Pages/Identity";
+
+>>>>>>> Stashed changes
 
 function App() {
   return (
@@ -28,6 +35,11 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/learders" element={<Leardership />} />
         <Route path="/events" element={<Events1 />} />
+<<<<<<< Updated upstream
+=======
+        <Route path="/devotion" element={<Devotional />} />
+        <Route path="/identiy" element={<Welcome />}/>
+>>>>>>> Stashed changes
       </Route>
 
       {/* Authentication pages */}

@@ -31,16 +31,6 @@ const About = () => {
           <Origin />
         </div>
       </section>
-
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#152B62] via-[#3154A5] to-[#762A7D] px-4 py-14 sm:px-8 md:py-20">
-        <div className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-[#5BC0E3]/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-20 h-80 w-80 rounded-full bg-[#762A7D]/40 blur-3xl" />
-
-        <div className="relative mx-auto max-w-6xl">
-          <Mission />
-        </div>
-      </section>
-
       <section className="relative overflow-hidden bg-gradient-to-r from-[#EAF2FF] via-[#F3E8FF] to-[#E0F7FF] px-4 py-16 sm:px-8 md:py-24">
         <div className="mx-auto max-w-3xl rounded-3xl border border-white/80 bg-white/60 px-6 py-10 text-center shadow-xl shadow-[#3154A5]/10 backdrop-blur-md sm:px-10 sm:py-14">
           <div className="mx-auto mb-6 h-1.5 w-16 rounded-full bg-gradient-to-r from-[#3154A5] via-[#762A7D] to-[#5BC0E3]" />
