@@ -1,8 +1,10 @@
+
 import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "./Components/MainLayout";
 import Outh from "./Components/Outh";
 import AdminRoute from "./Components/AdminRoute";
+import PermissionRoute from "./Components/PermissionRoute";
 
 import Home from "./Pages/Home";
 import About from "./Pages/About";
@@ -14,11 +16,11 @@ import Leardership from "./Pages/Leardership";
 import Events from "./Pages/Events";
 import Admin from "./Pages/Admin";
 import AdminLogin from "./Pages/AdminLogin";
+import LeaderEvents from "./Pages/LeaderEvents";
 import Events1 from "./Components/Events1";
 import { Devotional } from "./Components/Devotional";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Welcome from "./Pages/Identity";
-
 
 function App() {
   return (
@@ -30,7 +32,7 @@ function App() {
         <Route path="/learders" element={<Leardership />} />
         <Route path="/events" element={<Events1 />} />
         <Route path="/devotion" element={<Devotional />} />
-        <Route path="/identiy" element={<Welcome />}/>
+        <Route path="/identiy" element={<Welcome />} />
       </Route>
 
       <Route element={<Outh />}>
@@ -41,6 +43,15 @@ function App() {
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
+
+      <Route
+        path="/leader/events"
+        element={
+          <PermissionRoute permission="events.manage">
+            <LeaderEvents />
+          </PermissionRoute>
+        }
+      />
 
       <Route path="/admin/login" element={<AdminLogin />} />
 

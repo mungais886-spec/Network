@@ -1,3 +1,4 @@
+
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
@@ -7,7 +8,6 @@ import { sendVerificationEmail } from "../Service/emailService.js";
 
 const router = Router();
 
-// POST /api/auth/register
 router.post(
   "/register",
   [
@@ -70,10 +70,7 @@ router.post(
 
       const member = result.rows[0];
 
-      // Generate a secure verification token.
       const token = randomBytes(32).toString("hex");
-
-      // Store only the token's hash in PostgreSQL.
       const tokenHash = createHash("sha256").update(token).digest("hex");
 
       await pool.query(
@@ -83,7 +80,6 @@ router.post(
         [member.id, tokenHash],
       );
 
-      // Build the link the member will open from their email.
       const verificationUrl =
         `${process.env.FRONTEND_URL}/verify-email` +
         `?token=${token}&email=${encodeURIComponent(member.email)}`;
@@ -133,10 +129,6 @@ router.post(
   },
 );
 
-/**
-POST /api/auth/verify-email
-  Verifies a member's email using the token sent by email.**/
-
 router.post(
   "/verify-email",
   [
@@ -162,15 +154,12 @@ router.post(
     }
 
     const { email, token } = req.body;
-
     const tokenHash = createHash("sha256").update(token).digest("hex");
-
     const client = await pool.connect();
 
     try {
       await client.query("BEGIN");
 
-      // Lock the matching verification record to prevent reuse.
       const result = await client.query(
         `SELECT ev.id, ev.member_id
          FROM email_verifications ev
@@ -195,7 +184,6 @@ router.post(
 
       const verification = result.rows[0];
 
-      // Mark the token as used so it cannot verify another time.
       await client.query(
         `UPDATE email_verifications
          SET used_at = NOW()
@@ -203,7 +191,6 @@ router.post(
         [verification.id],
       );
 
-      // Activate the member's account.
       await client.query(
         `UPDATE members
          SET email_verified = TRUE,
@@ -232,11 +219,6 @@ router.post(
   },
 );
 
-/**
- * POST /api/auth/resend-verification
- *
- * Sends a fresh verification link to an unverified account.
- */
 router.post(
   "/resend-verification",
   [
@@ -264,8 +246,6 @@ router.post(
         [email],
       );
 
-      // Use the same general response to avoid revealing whether
-      // an email address belongs to a registered account.
       const genericResponse = {
         message:
           "If this address belongs to an unverified account, a verification email will be sent.",
@@ -276,9 +256,7 @@ router.post(
       }
 
       const member = result.rows[0];
-
       const token = randomBytes(32).toString("hex");
-
       const tokenHash = createHash("sha256").update(token).digest("hex");
 
       await pool.query(
@@ -337,32 +315,29 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      // Find the account by email.
       const result = await pool.query(
         `SELECT id, full_name, email, phone, password_hash,
           role, email_verified
-   FROM members
-   WHERE email = $1`,
+         FROM members
+         WHERE email = $1`,
         [email.toLowerCase()],
       );
 
       const member = result.rows[0];
 
-      // Use the same response for unknown emails and wrong passwords.
       if (!member || !(await bcrypt.compare(password, member.password_hash))) {
         return res.status(401).json({
           message: "Invalid email or password.",
         });
       }
 
-      // Require phone verification before allowing login.
       if (!member.email_verified) {
         return res.status(403).json({
           message: "Please verify your email address before logging in.",
           code: "EMAIL_VERIFICATION_REQUIRED",
         });
       }
-      // Regenerate the session ID after successful authentication.
+
       await new Promise((resolve, reject) => {
         req.session.regenerate((error) => {
           if (error) reject(error);
@@ -370,7 +345,6 @@ router.post(
         });
       });
 
-      // Store only safe member information in the session.
       req.session.member = {
         id: member.id,
         full_name: member.full_name,
@@ -378,7 +352,6 @@ router.post(
         role: member.role,
       };
 
-      // Ensure the session is saved before responding.
       await new Promise((resolve, reject) => {
         req.session.save((error) => {
           if (error) reject(error);
@@ -400,19 +373,74 @@ router.post(
   },
 );
 
-router.get("/me", (req, res) => {
-  if (!req.session.member) {
+router.get("/me", async (req, res) => {
+  if (!req.session?.member?.id) {
     return res.status(401).json({
       message: "You are not logged in.",
     });
   }
 
-  return res.status(200).json({
-    member: req.session.member,
-  });
+  try {
+    const result = await pool.query(
+      `SELECT
+        m.id,
+        m.full_name,
+        m.email,
+        m.role,
+        COALESCE(
+          array_agg(p.permission_key)
+            FILTER (WHERE p.permission_key IS NOT NULL),
+          ARRAY[]::text[]
+        ) AS permissions
+       FROM members m
+       LEFT JOIN member_permissions mp
+         ON mp.member_id = m.id
+       LEFT JOIN permissions p
+         ON p.id = mp.permission_id
+       WHERE m.id = $1
+       GROUP BY m.id, m.full_name, m.email, m.role`,
+      [req.session.member.id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        message: "Account not found.",
+      });
+    }
+
+    const member = result.rows[0];
+
+    return res.status(200).json({
+      member: {
+        id: member.id,
+        full_name: member.full_name,
+        email: member.email,
+        role: member.role,
+        permissions: member.permissions,
+      },
+    });
+  } catch (error) {
+    console.error("Session verification error:", error.message);
+
+    return res.status(500).json({
+      message: "Unable to verify your session.",
+    });
+  }
 });
 
 router.post("/logout", (req, res) => {
+  if (!req.session) {
+    res.clearCookie("church.sid", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    return res.status(200).json({
+      message: "Logged out successfully.",
+    });
+  }
+
   req.session.destroy((error) => {
     if (error) {
       console.error("Logout error:", error.message);

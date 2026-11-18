@@ -1,3 +1,4 @@
+
 import {
   createContext,
   useContext,
@@ -20,7 +21,7 @@ export function AuthProvider({ children }) {
         const data = await apiRequest("/auth/me");
 
         if (active) {
-          setUser(data.member ?? data.user ?? null);
+          setUser(data.member ?? null);
         }
       } catch {
         if (active) {
@@ -41,12 +42,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(email, password) {
-    const data = await apiRequest("/auth/login", {
+    await apiRequest("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
 
-    const member = data.member ?? data.user ?? null;
+    const data = await apiRequest("/auth/me");
+    const member = data.member ?? null;
+
     setUser(member);
 
     return member;
